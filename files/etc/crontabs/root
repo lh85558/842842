@@ -1,0 +1,13 @@
+
+# Crontab for TP-LINK 842N V3 Print Server
+# Weekly restart every Tuesday at 04:00 AM
+0 4 * * 2 /sbin/reboot
+
+# Daily log rotation at 03:00 AM
+0 3 * * * /usr/bin/logrotate /etc/logrotate.conf
+
+# CUPS cleanup every Sunday at 02:00 AM
+0 2 * * 0 /usr/sbin/cupsctl MaxJobs=100 && /usr/bin/cancel -a
+
+# Printer status check every hour
+0 * * * * /usr/bin/lpstat -p >> /var/log/printer-status.log

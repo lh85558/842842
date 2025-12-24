@@ -1,0 +1,94 @@
+
+name: Build TP-LINK-842N V3 LEDE PrintServer
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential ccache ecj fastjar file g++ gawk \
+          gettext git java-propose-classpath libelf-dev libncurses5-dev \
+          libncursesw5-dev libssl-dev python python2.7-dev python3 unzip wget \
+          python3-distutils python3-setuptools python3-dev rsync subversion \
+          swig time xsltproc zlib1g-dev
+          
+    - name: Configure git
+      run: |
+        git config --global user.name "builder"
+        git config --global user.email "builder@example.com"
+        
+    - name: Clone OpenWrt 21.02
+      run: |
+        git clone --depth 1 --branch openwrt-21.02 https://github.com/openwrt/openwrt.git openwrt
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: Apply custom feeds
+      run: |
+        cd openwrt
+        echo "src-git immortalwrt https://github.com/immortalwrt/packages.git;openwrt-21.02" >> feeds.conf.default
+        echo "src-git immortalwrt_luci https://github.com/immortalwrt/luci.git;openwrt-21.02" >> feeds.conf.default
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: Copy configuration
+      run: |
+        cp config/842n-v3.config openwrt/.config
+        cp -r files/ openwrt/
+        
+    - name: Download and prepare
+      run: |
+        cd openwrt
+        make defconfig
+        make download -j$(nproc)
+        
+    - name: Build firmware
+      run: |
+        cd openwrt
+        make -j$(nproc) V=s
+        
+    - name: Copy output files
+      run: |
+        mkdir -p output
+        cp openwrt/bin/targets/ath79/generic/*842n-v3*sysupgrade.bin output/ || true
+        cp openwrt/bin/targets/ath79/generic/*842n-v3*factory.bin output/ || true
+        cp openwrt/bin/targets/ath79/generic/*842n-v3*factory-us.bin output/ || true
+        
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'push'
+      with:
+        files: output/*
+        tag_name: v${{ github.run_number }}
+        name: TP-LINK-842N-V3-LEDE-PrintServer-${{ github.run_number }}
+        body: |
+          TP-LINK TL-WR842N V3 LEDE 21.02 中文打印服务器固件
+          
+          功能特性：
+          - CUPS 2.4.2 中文管理界面
+          - HP LaserJet 1020/1020plus/1007/1008/1108 驱动
+          - USB 打印机支持
+          - 网络打印机共享
+          - 远程打印服务
+          - VirtualHere USB 虚拟化
+          - 定时重启功能
+          
+          默认配置：
+          - LAN IP: 192.168.10.1
+          - Web登录: admin / thdn12345678
+          - Wi-Fi: THDN-dayin / thdn12345678
+          - 主机名: THDN-PrintServer
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

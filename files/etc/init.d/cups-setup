@@ -1,0 +1,56 @@
+
+#!/bin/sh /etc/rc.common
+# CUPS setup script for TP-LINK 842N V3 Print Server
+
+START=99
+STOP=10
+
+start() {
+    # Create CUPS directories
+    mkdir -p /var/log/cups
+    mkdir -p /var/spool/cups
+    mkdir -p /var/cache/cups
+    mkdir -p /etc/cups/ppd
+    
+    # Set permissions
+    chown -R root:lp /var/log/cups
+    chown -R root:lp /var/spool/cups
+    chown -R root:lp /var/cache/cups
+    chmod 755 /var/log/cups
+    chmod 755 /var/spool/cups
+    chmod 755 /var/cache/cups
+    
+    # Add lp group if not exists
+    grep -q "^lp:" /etc/group || echo "lp:x:7:" >> /etc/group
+    
+    # Start CUPS daemon
+    /usr/sbin/cupsd -f &
+    
+    # Wait for CUPS to start
+    sleep 3
+    
+    # Configure HP printers if connected
+    if lsusb | grep -q "HP"; then
+        echo "HP printer detected, configuring..."
+        /usr/bin/lpadmin -p HP-LaserJet -E -v usb://HP -m drv:///foo2zjs.drv/laserjet.ppd 2>/dev/null || true
+    fi
+    
+    # Enable remote access
+    iptables -I INPUT -p tcp --dport 631 -j ACCEPT 2>/dev/null || true
+    ip6tables -I INPUT -p tcp --dport 631 -j ACCEPT 2>/dev/null || true
+}
+
+stop() {
+    # Stop CUPS daemon
+    killall cupsd 2>/dev/null || true
+    
+    # Remove firewall rules
+    iptables -D INPUT -p tcp --dport 631 -j ACCEPT 2>/dev/null || true
+    ip6tables -D INPUT -p tcp --dport 631 -j ACCEPT 2>/dev/null || true
+}
+
+restart() {
+    stop
+    sleep 2
+    start
+}

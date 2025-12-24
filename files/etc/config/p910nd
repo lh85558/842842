@@ -1,0 +1,7 @@
+
+config p910nd
+	option enabled '1'
+	option interface 'lan'
+	option port '9100'
+	option bidirectional '1'
+	option device '/dev/usb/lp0'
