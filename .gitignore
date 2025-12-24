@@ -1,0 +1,120 @@
+
+# Build directories
+build/
+output/
+openwrt/
+openwrt-build/
+
+# OpenWrt specific
+.config.old
+.config.save
+tmp/
+logs/
+dl/
+bin/
+staging_dir/
+build_dir/
+feeds/
+package/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+
+# Downloaded files
+*.bin
+*.img
+*.tar.gz
+*.zip
+
+# Cache
+.ccache/
+.cache/
+
+# Backup files
+backup/
+*.backup
+*.old
+
+# Local configuration
+local/
+custom/
+personal/
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Log files
+*.log
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Executables
+*.exe
+*.out
+*.app
+*.deb
+*.rpm
+
+# Keys and certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# Local secrets
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Core dumps
+core
+core.*
+
+# Temporary directories
+tmp/
+temp/

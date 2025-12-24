@@ -108,3 +108,53 @@ opkg install cups-driver-gutenprint
 ### VirtualHere 配置
 ```bash
 # 启动 VirtualHere 服务
+/etc/init.d/vhusbd start
+/etc/init.d/vhusbd enable
+```
+
+## 故障排除
+
+### 打印机无法识别
+1. 检查 USB 连接
+2. 查看系统日志: `logread | grep printer`
+3. 重启 CUPS 服务: `/etc/init.d/cups-setup restart`
+
+### Web 界面无法访问
+1. 检查网络连接
+2. 确认 IP 地址: `ip addr show`
+3. 重启 Web 服务: `/etc/init.d/uhttpd restart`
+
+### 打印质量问题
+1. 检查驱动程序选择
+2. 调整打印质量设置
+3. 更新打印机固件
+
+## 安全建议
+
+1. **修改默认密码**
+2. **启用防火墙**
+3. **定期更新固件**
+4. **限制远程访问**
+
+## 更新日志
+
+### v1.0.0 (2024-12-25)
+- ✨ 初始版本发布
+- ✨ 集成 CUPS 2.4.2
+- ✨ 添加 HP 打印机驱动
+- ✨ 中文界面支持
+- ✨ 定时重启功能
+
+## 许可证
+
+本项目基于 OpenWrt 开源项目，遵循 GPL v2 许可证。
+
+## 致谢
+
+- [OpenWrt](https://openwrt.org/) - 开源路由器固件
+- [ImmortalWrt](https://github.com/immortalwrt) - 国内镜像源
+- [CUPS](https://www.cups.org/) - 通用 Unix 打印系统
+
+## 支持
+
+如有问题，请在 GitHub Issues 中反馈。

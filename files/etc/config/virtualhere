@@ -1,0 +1,7 @@
+
+config virtualhere 'main'
+	option enabled '1'
+	option port '7575'
+	option auto_discovery '1'
+	option max_clients '10'
+	option auth_required '0'
