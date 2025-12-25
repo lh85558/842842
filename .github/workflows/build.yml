@@ -59,13 +59,15 @@ jobs:
         cd openwrt
         make -j$(nproc) V=s
         
+
+    - name: Checkout code
+      uses: actions/checkout@v2
     - name: Copy output files
       run: |
         mkdir -p output
         cp openwrt/bin/targets/ath79/generic/*842n-v3*sysupgrade.bin output/ || true
         cp openwrt/bin/targets/ath79/generic/*842n-v3*factory.bin output/ || true
         cp openwrt/bin/targets/ath79/generic/*842n-v3*factory-us.bin output/ || true
-        
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'push'
